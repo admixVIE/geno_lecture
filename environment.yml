@@ -3,11 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - numpy
-  - psutil
-  - toolz
-  - matplotlib
-  - dill
   - pandas
-  - partd
-  - bokeh
-  - dask
+  - r-base=4 
+  - r-ggplot2=3.3.2

@@ -32,17 +32,14 @@ i2<-rnorm(n=100,mean=50,sd=33)
 myresult<-lapply(i1,myfunc,input2=i2)
 
 # processing data
-# read a table
-testfile<-read.table('test.mult.vcf.gz',as.is=T,sep="\t",nrows=5000)
+# read and write a table
+testfile<-read.table('fileA.txt',as.is=T,sep="\t")
 head(testfile)
 nrow(testfile)
-  
-# how many transitions vs transversions are there?
-transi<-c("A-G","G-A","C-T","T-C")
-transver<-c("A-C","A-T","G-C","G-T","C-A","C-G","T-A","T-G")
-testset<-paste(testfile[,4],testfile[,5],sep="-")
-testtab<-as.data.frame(table(testset))
-transi_num<-sum(testtab[which(testtab[,1]%in%transi),2])  
-transver_num<-sum(testtab[which(testtab[,1]%in%transver),2])
-transi_num/transver_num
+write.table(testfile, 'fileG.txt ',sep="\t",row.names=F,col.names=F,quote=F)
 
+
+# plotting
+plot(myresult[[1]],i2)
+hist(i2)
+barplot(i1,col="red")

@@ -1,6 +1,6 @@
 ###############################
 ## in ms
-/home/user/kuhlwilm/programs/msdir/ms 20 1 -seeds 105 2000 300 -t 2.0 -r 2.0 50000 -I 2 10 10 -n 1 2.0 -n 2 5.0 -ej 0.25 1 2 
+ms 20 1 -seeds 105 2000 300 -t 2.0 -r 2.0 50000 -I 2 10 10 -n 1 2.0 -n 2 5.0 -ej 0.25 1 2 
 
 ###############################
 ## in msprime (python)
@@ -55,7 +55,7 @@ mydata_mutate <- ts_mutate(mydata,  mutation_rate = 1e-8)
 
 mydata_gt<-ts_genotypes(mydata_mutate)
 
-## calculate and plot statistics (in R)
+## calculate and plot statistics
 ## heterozygosity
 myda_ht<-list();k=1
 for (j in seq(1,19,2)) {
@@ -101,9 +101,6 @@ dev.off()
 
 ###############################
 ## draw with demes in python
-conda activate myenv
-python3
-
 import demes
 import demesdraw
 
@@ -111,7 +108,4 @@ graph = demes.load("~/model.yaml")
 ax = demesdraw.tubes(graph)
 
 ax.figure.savefig("~/model.png")
-
-
-
 

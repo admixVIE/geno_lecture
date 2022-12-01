@@ -1,4 +1,4 @@
-echo "description:
+description:
   Basic model.
 time_units: generations
 demes:
@@ -12,6 +12,4 @@ demes:
   - name: popB
     ancestors: [Anc]
     epochs:
-    - {end_time: 0, start_size: 5000}" > model.yaml
-    
-    
+    - {end_time: 0, start_size: 5000}     

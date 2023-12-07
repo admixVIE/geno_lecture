@@ -8,7 +8,7 @@ demes:
   - name: popA
     ancestors: [Anc]
     epochs:
-    - {end_time: 0, start_size: 5000}
+    - {end_time: 0, start_size: 2000}
   - name: popB
     ancestors: [Anc]
     epochs:

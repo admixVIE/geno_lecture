@@ -1,6 +1,6 @@
 ###############################
 ## in ms
-ms 20 1 -seeds 105 2000 300 -t 2.0 -r 2.0 50000 -I 2 10 10 -n 1 2.0 -n 2 5.0 -ej 0.25 1 2 
+/home/user/kuhlwilm/programs/msdir/ms 20 1 -seeds 105 2000 300 -t 2.0 -r 2.0 50000 -I 2 10 10 -n 1 2.0 -n 2 5.0 -ej 0.25 1 2 
 
 ###############################
 ## in msprime (python)
@@ -40,12 +40,17 @@ for var in ts.variants():
 ###############################
 ## in R with slendr
 library(slendr)
-popA <- population("popA", N = 2000, time = 1001)
-popB <- population("popB", N = 5000, time = 1000, parent = popA)
+library(ggplot2)
+
+## define effective population sizes
+Ne1=2000
+Ne2=5000
+popA <- population("popA", N = Ne1, time = 1001)
+popB <- population("popB", N = Ne2, time = 1000, parent = popA)
 model <- compile_model(  list(popA, popB),
                          generation_time = 1,  simulation_length = 1000)
 
-plot_model(model)
+#plot_model(model)
 
 p1 <- model$populations[["popA"]]
 p2 <- model$populations[["popB"]]
@@ -55,7 +60,22 @@ mydata_mutate <- ts_mutate(mydata,  mutation_rate = 1e-8)
 
 mydata_gt<-ts_genotypes(mydata_mutate)
 
-## calculate and plot statistics
+## calculate and plot statistics (in R)
+## for the SFS
+samp1 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popA"), ]
+samp2 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popB"), ]
+afs1<-ts_afs(mydata_mutate, sample_sets = list(samp1$name),polarised=T)
+afs2<-ts_afs(mydata_mutate, sample_sets = list(samp2$name),polarised=T)
+
+# calculate SFS
+afss<-cbind(afs1,afs2)
+#pdf("~/test_sfs.pdf",8,5)
+barplot(t(afss),beside=T,names.arg=c(1:10),col=c("green","blue"))
+legend("topright",fill=c("green","blue"),legend=c(paste("Ne=",Ne1,sep=""),paste("Ne=",Ne2,sep="")),bty="n",border=NA,cex=2)
+#dev.off()
+
+
+
 ## heterozygosity
 myda_ht<-list();k=1
 for (j in seq(1,19,2)) {
@@ -86,21 +106,13 @@ data %>%
 # calculate FST
 ts_fst(mydata_mutate,sample_sets=list(c(paste("popA_",1:5,sep="")),c(paste("popB_",1:5,sep=""))))
 
-## with 5000 generations for the SFS
-samp1 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popA"), ]
-samp2 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popB"), ]
-afs1<-ts_afs(mydata_mutate, sample_sets = list(samp1$name),polarised=T)
-afs2<-ts_afs(mydata_mutate, sample_sets = list(samp2$name),polarised=T)
 
-# calculate SFS
-afss<-cbind(afs1,afs2)
-pdf("~/test_sfs.pdf",8,5)
-barplot(t(afss),beside=T,names.arg=c(1:10),col=c("green","blue"))
-legend("topright",fill=c("green","blue"),legend=c("Ne=2000","Ne=5000"),bty="n",border=NA,cex=2)
-dev.off()
 
 ###############################
 ## draw with demes in python
+conda activate myenv
+python3
+
 import demes
 import demesdraw
 
@@ -108,4 +120,7 @@ graph = demes.load("~/model.yaml")
 ax = demesdraw.tubes(graph)
 
 ax.figure.savefig("~/model.png")
+
+
+
 

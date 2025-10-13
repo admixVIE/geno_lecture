@@ -7,3 +7,4 @@ dependencies:
   - r-base=4
   - r-ggplot2=3.3.2
   - mafft
+  - r-phangorn

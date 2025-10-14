@@ -2,17 +2,18 @@
 ## in R with slendr
 library(slendr)
 library(ggplot2)
+init_env()
 
-## define effective population sizes
+## define effective population sizes and model
 Ne1=2000
 Ne2=5000
 popA <- population("popA", N = Ne1, time = 1001)
 popB <- population("popB", N = Ne2, time = 1000, parent = popA)
 model <- compile_model(  list(popA, popB),
-                         generation_time = 1,  simulation_length = 1000)
+                         generation_time = 1)
+plot_model(model)
 
-#plot_model(model)
-
+# create populations and dataset
 p1 <- model$populations[["popA"]]
 p2 <- model$populations[["popB"]]
 mydata_gt<-schedule_sampling(model,times=0,list(p1,5),list(p2,5))
@@ -21,36 +22,52 @@ mydata_mutate <- ts_mutate(mydata,  mutation_rate = 1e-8)
 
 mydata_gt<-ts_genotypes(mydata_mutate)
 
-## calculate and plot statistics (in R)
+## calculate and plot statistics
 ## for the SFS
 samp1 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popA"), ]
 samp2 <- ts_samples(mydata_mutate) %>% .[.$pop %in% c("popB"), ]
-afs1<-ts_afs(mydata_mutate, sample_sets = list(samp1$name),polarised=T)
-afs2<-ts_afs(mydata_mutate, sample_sets = list(samp2$name),polarised=T)
+afs1<-ts_afs(mydata_mutate, sample_sets = list(samp1$name),polarised=T)[-1]
+afs2<-ts_afs(mydata_mutate, sample_sets = list(samp2$name),polarised=T)[-1]
 
 # calculate SFS
 afss<-cbind(afs1,afs2)
-#pdf("~/test_sfs.pdf",8,5)
+pdf("test_sfs.pdf",8,5)
 barplot(t(afss),beside=T,names.arg=c(1:10),col=c("green","blue"))
 legend("topright",fill=c("green","blue"),legend=c(paste("Ne=",Ne1,sep=""),paste("Ne=",Ne2,sep="")),bty="n",border=NA,cex=2)
-#dev.off()
+dev.off()
 
 
+## save as VCF file
+#mydata_gt<-ts_vcf(mydata_mutate,path="test.vcf.gz")
 
-## heterozygosity
+# calculate FST
+ts_fst(mydata_mutate,sample_sets=list(c(paste("popA_",1:5,sep="")),c(paste("popB_",1:5,sep=""))))
+
+# modification with population resize
+popB <- population("popB", N = Ne2, time = 1000, parent = popA) %>% 
+  resize(N = 100, time = 600, how = "step")  %>% 
+  resize(N = 6000, time = 580, end=400, how = "exponential")
+
+# modification with gene flow
+model <- compile_model(  list(popA, popB),gene_flow(from = popB, to = popA, rate = 0.5, start = 250, end = 200),
+                         generation_time = 1)
+
+
+## calculate heterozygosity per individual
 myda_ht<-list();k=1
 for (j in seq(1,19,2)) {
   myda_ht[[k]]<-table(rowSums(mydata_gt[,(j+1):(j+2)]))
   k=k+1
-  }
+}
 
 mda<-do.call(rbind,myda_ht)
 data<-data.frame(name=c(rep("A",5),rep("B",5)),val=mda[,2]/5000000*1000)
 
+# plot heterozygosity as violin plot
 library(viridis)
 data %>%
   ggplot( aes(x=name, y=val, fill=name)) +
-  geom_boxplot() +
+  geom_violin() +
   scale_fill_viridis(discrete = TRUE, alpha=0.6) +
   geom_jitter(color="black", size=1, alpha=0.9) +
   theme_minimal() +
@@ -60,9 +77,3 @@ data %>%
   ) +
   ggtitle("Heterozygosity") +
   xlab("")
-
-## as VCF file
-#mydata_gt<-ts_vcf(mydata_mutate,path="test.vcf.gz")
-
-# calculate FST
-ts_fst(mydata_mutate,sample_sets=list(c(paste("popA_",1:5,sep="")),c(paste("popB_",1:5,sep=""))))

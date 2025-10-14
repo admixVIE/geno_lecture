@@ -1,6 +1,7 @@
-# in bash:
-#mafft --auto all.fa > out.fa
+# in bash!
+mafft --auto all.fa > out.fa
 
+## now in R!
 # the necessary libraries
 library(phangorn)
 library(pheatmap)
@@ -31,3 +32,25 @@ plot(density(unlist(pwdist[grep("Human",rownames(pwdist)),grep("Neander",colname
 par(new=T)
 plot(density(unlist(pwdist[grep("Human|Neander",rownames(pwdist)),grep("Chimp",colnames(pwdist))])),col="violet",xlim=limit,axes=F,bty=NULL,main="",xlab="",ylab="")
 legend("top",legend=c("Human","Neanderthal","Hominin","to-Chimp"),fill=c("green","blue","red","violet"))
+
+
+## heterozygosity (again in bash) 
+# get data and calculate heterozygosity
+wget https://phaidra.univie.ac.at/pfsa/o_2066302/merged_segregating/Pan/Pan_wild/chr21.vcf.gz
+bcftools stats -s chr21.vcf.gz > stats21.txt
+plot-vcfstats -p test stats21.txt
+
+# get only numbers of heterozygous sites per individual, or allele frequencies
+grep "^PSC" stats21.txt | cut -f6 > hets.txt
+grep "^AF" stats21.txt > afs.txt
+
+# calculate and plot per 10,000 bp (in R)
+stat<-read.table("hets.txt",)
+chromlen=30000000
+hestat<-unlist(stat)/chromlen*10000
+plot(sort(hestat), type="p")
+
+# calculate allele frequencies (in R)
+afs<-read.table("afs.txt")
+freq=afs[,4]/sum(afs[,4])
+plot(x=afs[,3],y=freq,type="b",col="red",lwd=2)

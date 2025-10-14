@@ -4,7 +4,7 @@ ls bla/
 ls -lh bla/
 mkdir blabla 
 cp fileA.txt fileB.txt 
-mv fileA.txt fileC.txt 
+mv fileB.txt fileC.txt 
 rm fileC.txt
 pwd
 ls bla/file*.txt 

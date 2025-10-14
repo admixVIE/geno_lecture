@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  - openssl
   - numpy
   - pandas
   - r-base=4

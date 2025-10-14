@@ -37,7 +37,7 @@ legend("top",legend=c("Human","Neanderthal","Hominin","to-Chimp"),fill=c("green"
 ## heterozygosity (again in bash) 
 # get data and calculate heterozygosity
 wget https://phaidra.univie.ac.at/pfsa/o_2066302/merged_segregating/Pan/Pan_wild/chr21.vcf.gz
-bcftools stats -s chr21.vcf.gz > stats21.txt
+bcftools stats -s - chr21.vcf.gz > stats21.txt
 plot-vcfstats -p test stats21.txt
 
 # get only numbers of heterozygous sites per individual, or allele frequencies

@@ -13,4 +13,4 @@ dependencies:
   - r-pheatmap
   - bcftools
   - samtools
-  - openssl=1.0
+  - openssl

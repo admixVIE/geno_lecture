@@ -13,4 +13,4 @@ dependencies:
   - r-phangorn
   - r-pheatmap
   - samtools
-  - bcftools==1.22--h3a4d415_1
+  - bcftools==1.22--h3a4d415

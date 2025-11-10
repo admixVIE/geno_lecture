@@ -14,4 +14,4 @@ dependencies:
   - r-pheatmap
   - samtools
   - bcftools
-  - libssl-libcryptso6
+  - libssl

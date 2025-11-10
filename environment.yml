@@ -4,6 +4,7 @@ channels:
   - bioconda
 dependencies:
   - openssl
+  - r-openssl
   - numpy
   - pandas
   - r-base=4
@@ -11,6 +12,6 @@ dependencies:
   - mafft
   - r-phangorn
   - r-pheatmap
-  - bcftools
   - samtools
-  - openssl
+  - bcftools
+  - libssl-libcryptso6

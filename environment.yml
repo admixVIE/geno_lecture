@@ -4,12 +4,12 @@ channels:
   - bioconda
 dependencies:
   - openssl
-  - r-openssl
   - numpy
   - pandas
-  - r-base=4
-  - r-ggplot2=3.3.2
   - mafft
+  - r-base
+  - r-ggplot2
+  - r-openssl
   - r-phangorn
   - r-pheatmap
   - samtools

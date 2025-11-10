@@ -12,3 +12,5 @@ dependencies:
   - r-phangorn
   - r-pheatmap
   - bcftools
+  - samtools
+  - openssl=1.0
